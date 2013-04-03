@@ -48,7 +48,7 @@ import org.olanto.converter.Constants;
 public class ConvertService_BASIC extends UnicastRemoteObject implements ConvertService {
 
     private final static Logger _logger = Logger.getLogger(ConvertService_BASIC.class);
-    public final static String TEMPDIR = "C:\\MYCAT\\temp";
+    public final static String TEMPDIR = System.getProperty("java.io.tmpdir");
 
     public ConvertService_BASIC() throws RemoteException {
         super();
