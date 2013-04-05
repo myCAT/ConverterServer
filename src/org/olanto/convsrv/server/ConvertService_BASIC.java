@@ -29,6 +29,7 @@ import java.rmi.*;
 import java.rmi.server.*;
 import java.util.concurrent.locks.*;
 import org.apache.log4j.Logger;
+import org.olanto.converter.ConfigUtil;
 import org.olanto.converter.Constants;
 
 /**
@@ -48,10 +49,11 @@ import org.olanto.converter.Constants;
 public class ConvertService_BASIC extends UnicastRemoteObject implements ConvertService {
 
     private final static Logger _logger = Logger.getLogger(ConvertService_BASIC.class);
-    public final static String TEMPDIR = System.getProperty("java.io.tmpdir");
+    public static String TEMPDIR = System.getProperty("java.io.tmpdir");
 
     public ConvertService_BASIC() throws RemoteException {
         super();
+        TEMPDIR= ConfigUtil.getTempPath();
         File tmpDir = new File(TEMPDIR);
 
         if (!tmpDir.exists()) {
@@ -87,11 +89,11 @@ public class ConvertService_BASIC extends UnicastRemoteObject implements Convert
             Document dest = new Document(f.getAbsolutePath() + ".txt");
 
             SimpleConverterApplication converter = SimpleConverterApplication.getInstance();
-            converter.setMaxRetry(3);
-            converter.setOutputFormat("txt");
+            converter.setMaxRetry(ConfigUtil.getMaxRetry());
+            converter.setOutputFormat(ConfigUtil.getTargetFormat());
 
             converter.convertObject(src, dest, null);
-            ret = UtilsFiles.file2String(new FileInputStream(dest), "UTF-8");
+            ret = UtilsFiles.file2String(new FileInputStream(dest), ConfigUtil.getOutputEncoding());
 
             return ret;
         } catch (Exception e) {
@@ -120,7 +122,7 @@ public class ConvertService_BASIC extends UnicastRemoteObject implements Convert
             Document dest = new Document(f.getAbsolutePath() + "."+Constants.TXT);
 
             SimpleConverterApplication converter = SimpleConverterApplication.getInstance();
-            converter.setMaxRetry(3);
+            converter.setMaxRetry(ConfigUtil.getMaxRetry());
             converter.setOutputFormat(Constants.TXT);
             converter.convertObject(src, dest, src.getParentFile().getAbsolutePath());
             ret = UtilsFiles.file2String(new FileInputStream(dest), "UTF-8");
@@ -189,7 +191,7 @@ public class ConvertService_BASIC extends UnicastRemoteObject implements Convert
             Document dest = new Document(f.getAbsolutePath() + "."+targetFormat);
 
             SimpleConverterApplication converter = SimpleConverterApplication.getInstance();
-            converter.setMaxRetry(3);
+            converter.setMaxRetry(ConfigUtil.getMaxRetry());
             converter.setOutputFormat(targetFormat);
 
             converter.convertObject(src, dest, null);
